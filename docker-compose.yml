@@ -1,4 +1,4 @@
-version: "1"
+version: "3.8"
 services:
   mongo:
     image: mongo:latest
@@ -20,7 +20,7 @@ services:
       - MONGODB_URI=mongodb://mongo:27017/health-monitor-dev
     volumes:
       - ./:/app
-    command: npm run debug
+    command: npm run start
 volumes:
  mongodb:
  mongodb_config:

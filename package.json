@@ -4,7 +4,6 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "debug": "nodemon --inspect=0.0.0.0:9229 app.js",
     "start": "node app.js",
     "test": "nyc mocha --timeout=10000 --exit",
     "lint": "eslint \"**/*.js\""

@@ -20,7 +20,7 @@ USER node
 
 COPY --chown=node:node . .
 
-RUN npm ci && mkdir .tmp 
+RUN npm i && mkdir .tmp 
 EXPOSE 8080
 
 CMD [ "npm", "start" ]
