@@ -5,17 +5,10 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const chalk = require('chalk');
 const errorHandler = require('errorhandler');
-const lusca = require('lusca');
 const dotenv = require('dotenv');
 const MongoStore = require('connect-mongo')(session);
-const flash = require('express-flash');
 const path = require('path');
 const mongoose = require('mongoose');
-const passport = require('passport');
-const sass = require('node-sass-middleware');
-const multer = require('multer');
-
-const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -46,10 +39,6 @@ app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(compression());
-app.use(sass({
-    src: path.join(__dirname, 'public'),
-    dest: path.join(__dirname, 'public')
-}));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -63,21 +52,35 @@ app.use(session({
         autoReconnect: true,
     })
 }));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
-app.use((req, res, next) => {
-    if (req.path === '/api/upload') {
-        // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
-        next();
-    } else {
-        lusca.csrf()(req, res, next);
-    }
+
+app.use("/api/v1", require("./api/v1"));
+
+const cron = require("node-cron");
+const healthCheckService = require("./services/healthCheck");
+// execute every minute
+cron.schedule("* * * * *", () => {
+    healthCheckService.healthCheck();
 });
-app.use(lusca.xframe('SAMEORIGIN'));
-app.use(lusca.xssProtection(true));
-app.disable('x-powered-by');
-app.use((req, res, next) => {
-    res.locals.user = req.user;
-    next();
+
+/**
+ * Error Handler.
+ */
+if (process.env.NODE_ENV === 'development') {
+  // only use in development
+  app.use(errorHandler());
+} else {
+  app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500).send('Server Error');
+  });
+}
+
+/**
+ * Start Express server.
+ */
+app.listen(app.get('port'), () => {
+  console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
+  console.log('  Press CTRL-C to stop\n');
 });
+
+module.exports = app;
