@@ -7,9 +7,15 @@ const incidentSchema = new mongoose.Schema(
     error: String,
     start: Date,
     end: Date,
+    duration: Number,
   },
   { timestamps: true }
 );
+
+incidentSchema.pre("save", function save(next) {
+  console.log(`Incident saving: ${JSON.stringify(this.id)}.`);
+  next();
+});
 
 const Incident = mongoose.model("Incident", incidentSchema);
 

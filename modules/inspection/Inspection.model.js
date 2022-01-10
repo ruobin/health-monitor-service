@@ -10,6 +10,14 @@ const inspectionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+inspectionSchema.pre("save", function save(next) {
+  console.log(
+    `Inspection saving: ${JSON.stringify(this.id)}.`
+  );
+  next();
+});
+
+
 const Inspection = mongoose.model("Inspection", inspectionSchema);
 
 module.exports = Inspection;

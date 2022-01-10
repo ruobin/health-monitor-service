@@ -1,4 +1,5 @@
 const Endpoint = require("./Endpoint.model");
+const healthCheckService = require("../../services/healthCheck");
 
 exports.index = async (req, res) => {
   const endpoints = await Endpoint.find({});
@@ -33,6 +34,7 @@ exports.create = async (req, res) => {
     interval,
     timeout,
   });
+  healthCheckService.healthCheck([endpoint]);
   res.json(endpoint);
 };
 

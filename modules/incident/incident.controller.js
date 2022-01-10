@@ -11,3 +11,10 @@ exports.find = async (req, res) => {
   });
   res.json({ incident });
 };
+
+exports.findByEndpointId = async (req, res) => {
+  const incident = await Incident.findOne({
+    endpointId: req.params.id,
+  });
+  res.json({ incident });
+};
