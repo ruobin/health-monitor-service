@@ -14,13 +14,14 @@ RUN apt update \
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json ./
 
 USER node
 
 COPY --chown=node:node . .
 
-RUN npm i && mkdir .tmp 
+RUN rm -rf package-lock.json node_modules \
+    && npm install && mkdir .tmp
 EXPOSE 8080
 
 CMD [ "npm", "start" ]
