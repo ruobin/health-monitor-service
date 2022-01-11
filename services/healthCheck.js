@@ -69,6 +69,7 @@ exports.healthCheck = async (endpoints) => {
             `Receive response: ${response.data} for endpoint: ${endpoint.url}`
           );
 
+          // http status code shows error
           if (response.status >= 400) {
             if (
               !latestIncident ||
@@ -98,7 +99,8 @@ exports.healthCheck = async (endpoints) => {
             });
             if (latestIncident && !latestIncident.end) {
               latestIncident.end = endDate;
-              latestIncident.duration = endTime - latestIncident.start.getTime();
+              latestIncident.duration =
+                endTime - latestIncident.start.getTime();
               latestIncident.save();
             }
           }

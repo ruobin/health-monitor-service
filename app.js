@@ -61,6 +61,12 @@ app.use("/api/v1", require("./api/v1"));
 
 healthCheckService.initHealthCheck();
 
+app.use(
+  "/",
+  express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
+);
+
+
 /**
  * Error Handler.
  */

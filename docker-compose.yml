@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   mongo:
-    image: mongo:latest
+    image: mongo:5.0
     restart: always
     ports:
       - "27017:27017"
@@ -16,7 +16,6 @@ services:
       - 8080:8080
       - 9229:9229
     environment:
-      - SERVER_PORT=8000
       - MONGODB_URI=mongodb://mongo:27017/health-monitor-dev
     volumes:
       - ./:/app
