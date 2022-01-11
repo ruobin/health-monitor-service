@@ -69,19 +69,7 @@ exports.healthCheck = async (endpoints) => {
             `Receive response: ${response.data} for endpoint: ${endpoint.url}`
           );
 
-          if (response.data === endpoint.expectedResponse) {
-            await Inspection.create({
-              endpointId: endpoint.id,
-              start: startDate,
-              end: endDate,
-              duration: endTime - startTime,
-            });
-            if (latestIncident && !latestIncident.end) {
-              latestIncident.end = endDate;
-              latestIncident.duration = endDate.getTime() - startDate.getTime();
-              latestIncident.save();
-            }
-          } else {
+          if (response.status >= 400) {
             if (
               !latestIncident ||
               (latestIncident &&
@@ -96,7 +84,21 @@ exports.healthCheck = async (endpoints) => {
               });
             } else if (latestIncident) {
               // the last incident is still ongoing
-              latestIncident.duration = Date.now() - startDate.getTime();
+              latestIncident.duration =
+                Date.now() - latestIncident.start.getTime();
+              latestIncident.save();
+            }
+          } else {
+            await Inspection.create({
+              endpointId: endpoint.id,
+              start: startDate,
+              end: endDate,
+              duration: endTime - startTime,
+              response: JSON.stringify(response.data),
+            });
+            if (latestIncident && !latestIncident.end) {
+              latestIncident.end = endDate;
+              latestIncident.duration = endTime - latestIncident.start.getTime();
               latestIncident.save();
             }
           }
@@ -118,7 +120,8 @@ exports.healthCheck = async (endpoints) => {
             });
           } else if (latestIncident) {
             // the last incident is still ongoing
-            latestIncident.duration = Date.now() - startDate.getTime();
+            latestIncident.duration =
+              Date.now() - latestIncident.start.getTime();
             latestIncident.save();
           }
         }

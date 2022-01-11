@@ -6,6 +6,7 @@ const inspectionSchema = new mongoose.Schema(
     start: Date,
     end: Date,
     duration: Number,
+    response: String,
   },
   { timestamps: true }
 );
