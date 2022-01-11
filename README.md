@@ -13,7 +13,7 @@ run `docker-compose up --build` in the project root directory
 run
 
 
-`docker run -p 20217:20217 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=111222 --name health-monitor-dev -d mongo`
+`docker run -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=111222 --name health-monitor-dev -d mongo:5.0`
 
 config the correct mongodb uri in `.env` file by adding this line
 

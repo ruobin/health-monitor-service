@@ -8,12 +8,13 @@ exports.healthCheck = async (endpoints) => {
   await Promise.all(
     endpoints.map(async (endpoint) => {
       setInterval(async () => {
-        const latestIncident = await Incident.findOne({
+        const incidents = await Incident.find({
           endpointId: endpoint.id,
-        }).sort({ updatedAt: -1 });
+        }).sort({ updatedAt: -1 }).limit(1);
+        const latestIncident = incidents[0];
         console.log(
           `latest incident is ${JSON.stringify(
-            latestIncident && latestIncident.id
+            latestIncident
           )}`
         );
 
@@ -111,14 +112,12 @@ exports.healthCheck = async (endpoints) => {
               latestIncident.end &&
               latestIncident.end < startDate)
           ) {
-            const endDate = new Date();
             console.error(JSON.stringify(e));
             await Incident.create({
               endpointId: endpoint.id,
               type: "HTTP_EXCEPTION",
               error: e.message,
               start: startDate,
-              end: endDate,
             });
           } else if (latestIncident) {
             // the last incident is still ongoing

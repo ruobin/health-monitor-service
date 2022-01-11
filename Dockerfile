@@ -20,8 +20,8 @@ USER node
 
 COPY --chown=node:node . .
 
-RUN rm -rf package-lock.json node_modules \
-    && npm install && mkdir .tmp
+# RUN rm -rf package-lock.json node_modules \
+RUN npm install && mkdir .tmp
 EXPOSE 8080
 
 CMD [ "npm", "start" ]
