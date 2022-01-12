@@ -56,22 +56,13 @@ app.use(
     }),
   })
 );
-
 app.use("/api/v1", require("./api/v1"));
-
-healthCheckService.initHealthCheck();
-
 app.use(
   "/",
   express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
 );
 
-
-/**
- * Error Handler.
- */
 if (process.env.NODE_ENV === "development") {
-  // only use in development
   app.use(errorHandler());
 } else {
   app.use((err, req, res, next) => {
@@ -80,9 +71,6 @@ if (process.env.NODE_ENV === "development") {
   });
 }
 
-/**
- * Start Express server.
- */
 app.listen(app.get("port"), () => {
   console.log(
     "App is running at http://localhost:%d in %s mode",
@@ -90,6 +78,9 @@ app.listen(app.get("port"), () => {
     app.get("env")
   );
   console.log("  Press CTRL-C to stop\n");
+
+  // start to run health check when server is up
+  healthCheckService.initHealthCheck();
 });
 
 module.exports = app;

@@ -88,7 +88,7 @@ exports.healthCheck = async (endpoints) => {
             console.error(JSON.stringify(e));
             await Incident.create({
               endpointId: endpoint.id,
-              type: "HTTP_EXCEPTION",
+              type: "OTHER_EXCEPTION",
               error: e.message,
               start: startDate,
             });
@@ -105,6 +105,7 @@ exports.healthCheck = async (endpoints) => {
 };
 
 exports.initHealthCheck = async () => {
+  console.log(`initHealthCheck...`);
   const endpoints = await Endpoint.find({});
   this.healthCheck(endpoints);
 };
